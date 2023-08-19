@@ -1,0 +1,40 @@
+{
+  "dependencies": [
+    {
+      "group": "net.kyori",
+      "artifact": "adventure-text-minimessage",
+      "version": "4.14.0",
+      "relocate": {
+        "from": "net.kyori",
+        "to": "com.artillexstudios.axsmithing.libs.adventure"
+      }
+    },
+    {
+      "group": "net.kyori",
+      "artifact": "adventure-text-serializer-legacy",
+      "version": "4.14.0",
+      "relocate": {
+        "from": "net.kyori",
+        "to": "com.artillexstudios.axsmithing.libs.adventure"
+      }
+    },
+    {
+      "group": "net.kyori",
+      "artifact": "adventure-platform-bukkit",
+      "version": "4.3.0",
+      "relocate": {
+        "from": "net.kyori",
+        "to": "com.artillexstudios.axsmithing.libs.adventure"
+      }
+    },
+    {
+      "group": "net.kyori",
+      "artifact": "adventure-api",
+      "version": "4.14.0",
+      "relocate": {
+        "from": "net.kyori",
+        "to": "com.artillexstudios.axsmithing.libs.adventure"
+      }
+    }
+  ]
+}
