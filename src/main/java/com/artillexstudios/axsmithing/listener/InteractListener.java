@@ -20,7 +20,7 @@ public class InteractListener implements Listener {
         if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
 
         if (AxSmithingPlugin.is1_20()) {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) == ProtocolVersion.v1_20.getVersion()) {
+            if (Via.getAPI().getPlayerVersion(event.getPlayer()) == ProtocolVersion.v1_20.getVersion() && !AxSmithingPlugin.getConfiguration().getBoolean("menu.v1_20.force-for-1_20-clients")) {
                 return;
             }
         } else {

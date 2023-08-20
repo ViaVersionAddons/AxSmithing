@@ -80,20 +80,16 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
             int amount;
             if (event.getInventory().getItem(itemSlot) != null) {
                 amount = event.getInventory().getItem(itemSlot).getAmount() - 1;
-                if (amount == 0) {
-                    event.getInventory().setItem(itemSlot, null);
-                } else {
-                    event.getInventory().getItem(itemSlot).setAmount(amount);
-                }
+                ItemStack item = event.getInventory().getItem(itemSlot);
+                item.setAmount(amount);
+                event.getInventory().setItem(itemSlot, item);
             }
 
             if (event.getInventory().getItem(upgradeSlot) != null) {
                 amount = event.getInventory().getItem(upgradeSlot).getAmount() - 1;
-                if (amount == 0) {
-                    event.getInventory().setItem(upgradeSlot, null);
-                } else {
-                    event.getInventory().getItem(upgradeSlot).setAmount(amount);
-                }
+                ItemStack item = event.getInventory().getItem(upgradeSlot);
+                item.setAmount(amount);
+                event.getInventory().setItem(upgradeSlot, item);
             }
 
             return;
@@ -106,9 +102,9 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
     public void handleClose(InventoryCloseEvent event) {
         if (!(event.getInventory().getHolder() instanceof SmithingTable_V1_16)) return;
 
-        if (event.getInventory().getItem(itemSlot) != null)
+        if (event.getInventory().getItem(itemSlot) != null && event.getInventory().getItem(itemSlot).getType() != Material.AIR)
             event.getPlayer().getInventory().addItem(event.getInventory().getItem(itemSlot));
-        if (event.getInventory().getItem(upgradeSlot) != null)
+        if (event.getInventory().getItem(upgradeSlot) != null && event.getInventory().getItem(upgradeSlot).getType() != Material.AIR)
             event.getPlayer().getInventory().addItem(event.getInventory().getItem(upgradeSlot));
     }
 
@@ -116,7 +112,7 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
     public void handleDrag(InventoryDragEvent event) {
         if (!(event.getInventory().getHolder() instanceof SmithingTable_V1_16)) return;
 
-        if (event.getInventory().getItem(outputSlot) != null) {
+        if (event.getInventory().getItem(outputSlot) != null && event.getInventory().getItem(outputSlot).getType() != Material.AIR) {
             event.getInventory().getItem(outputSlot).setAmount(0);
         }
 
