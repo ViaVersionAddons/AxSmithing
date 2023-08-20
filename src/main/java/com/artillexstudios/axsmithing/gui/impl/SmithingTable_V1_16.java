@@ -83,6 +83,7 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
                 ItemStack item = event.getInventory().getItem(itemSlot);
                 item.setAmount(amount);
                 event.getInventory().setItem(itemSlot, item);
+                ((Player) event.getWhoClicked()).updateInventory();
             }
 
             if (event.getInventory().getItem(upgradeSlot) != null) {
@@ -90,6 +91,7 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
                 ItemStack item = event.getInventory().getItem(upgradeSlot);
                 item.setAmount(amount);
                 event.getInventory().setItem(upgradeSlot, item);
+                ((Player) event.getWhoClicked()).updateInventory();
             }
 
             return;
