@@ -3,6 +3,7 @@ package com.artillexstudios.axsmithing.listener;
 import com.artillexstudios.axsmithing.AxSmithingPlugin;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -20,7 +21,7 @@ public class InteractListener implements Listener {
         if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
 
         if (AxSmithingPlugin.is1_20()) {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) == ProtocolVersion.v1_20.getVersion() && !AxSmithingPlugin.getConfiguration().getBoolean("menu.v1_20.force-for-1_20-clients")) {
+            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= ProtocolVersion.v1_20.getVersion() && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
                 return;
             }
         } else {

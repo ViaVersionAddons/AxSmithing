@@ -1,7 +1,7 @@
 menu:
   # If your server version is 1.20+, this is what will be shown for lower version clients
   "1_20":
-    title: '&7Upgrade items'
+    title: '&0Upgrade items'
     rows: 3
     template-slot: 10
     item-slot: 11
@@ -25,7 +25,7 @@ menu:
 
   # If your server version is 1.16+, this is what will be shown to 1.20+ clients
   "1_16":
-    title: '&7Upgrade items'
+    title: '&0Upgrade items'
     rows: 3
     item-slot: 11
     upgrade-slot: 12
@@ -42,7 +42,7 @@ menu:
         material: air
 
 messages:
-  prefix: "&#AA3428AxSmithing &7» "
+  prefix: "&#AA3428&lAxSmithing &7» "
   no-permission: "&cYou do not have permission to do this!"
   reload: "&aPlugin reloaded in %time%ms!"
 
