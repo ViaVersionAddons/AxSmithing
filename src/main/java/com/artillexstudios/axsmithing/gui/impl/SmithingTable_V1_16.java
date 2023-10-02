@@ -165,26 +165,36 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
             ItemStack finalAddition = addition;
             ItemStack finalBase = base;
 
-            Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
-            while (recipeIterator.hasNext()) {
-                inv.setItem(outputSlot, new ItemStack(Material.AIR));
-                Recipe recipe = recipeIterator.next();
+            boolean successful = checkRecipe(inv, finalBase, finalAddition);
 
-                if (recipe instanceof SmithingRecipe smithingRecipe) {
-                    boolean test1 = smithingRecipe.getBase().getItemStack().getType() == finalBase.getType();
-                    ItemMeta baseItemMeta = finalBase.getItemMeta();
-                    boolean test2 = smithingRecipe.getAddition().getItemStack().getType() == finalAddition.getType();
-
-                    if (test1 && test2) {
-                        ItemStack item = smithingRecipe.getResult();
-                        item.setItemMeta(baseItemMeta);
-                        inv.setItem(outputSlot, item);
-                        break;
-                    } else {
-                        inv.setItem(outputSlot, new ItemStack(Material.AIR));
-                    }
-                }
+            if (!successful) {
+                checkRecipe(inv, finalAddition, finalBase);
             }
         }, 0L);
+    }
+
+    private boolean checkRecipe(Inventory inventory, ItemStack finalBase, ItemStack finalAddition) {
+        Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
+        while (recipeIterator.hasNext()) {
+            inventory.setItem(outputSlot, new ItemStack(Material.AIR));
+            Recipe recipe = recipeIterator.next();
+
+            if (recipe instanceof SmithingRecipe smithingRecipe) {
+                boolean test1 = smithingRecipe.getBase().test(finalBase);
+                ItemMeta baseItemMeta = finalBase.getItemMeta();
+                boolean test2 = smithingRecipe.getAddition().test(finalAddition);
+
+                if (test1 && test2) {
+                    ItemStack item = smithingRecipe.getResult();
+                    item.setItemMeta(baseItemMeta);
+                    inventory.setItem(outputSlot, item);
+                    return true;
+                } else {
+                    inventory.setItem(outputSlot, new ItemStack(Material.AIR));
+                }
+            }
+        }
+
+        return false;
     }
 }

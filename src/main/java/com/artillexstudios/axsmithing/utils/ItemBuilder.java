@@ -50,7 +50,7 @@ public class ItemBuilder {
         replacements.forEach((key, value) -> message.set(message.get().replace(key, value)));
 
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(StringUtils.format(String.valueOf(message)));
+        meta.setDisplayName(StringUtils.format(message.get()));
 
         item.setItemMeta(meta);
     }

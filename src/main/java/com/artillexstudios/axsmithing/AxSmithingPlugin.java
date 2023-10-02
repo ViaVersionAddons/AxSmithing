@@ -2,7 +2,6 @@ package com.artillexstudios.axsmithing;
 
 import com.artillexstudios.axsmithing.command.AxSmithingCommand;
 import com.artillexstudios.axsmithing.command.AxSmithingTabComplete;
-import com.artillexstudios.axsmithing.dependency.DependencyManager;
 import com.artillexstudios.axsmithing.gui.SmithingTable;
 import com.artillexstudios.axsmithing.gui.impl.SmithingTable_V1_16;
 import com.artillexstudios.axsmithing.gui.impl.SmithingTable_V1_20;

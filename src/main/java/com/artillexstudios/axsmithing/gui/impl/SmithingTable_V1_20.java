@@ -95,6 +95,8 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
                 } else {
                     event.getInventory().getItem(templateSlot).setAmount(amount);
                 }
+
+                ((Player) event.getWhoClicked()).updateInventory();
             }
 
             if (event.getInventory().getItem(itemSlot) != null) {
@@ -104,6 +106,8 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
                 } else {
                     event.getInventory().getItem(itemSlot).setAmount(amount);
                 }
+
+                ((Player) event.getWhoClicked()).updateInventory();
             }
 
             if (event.getInventory().getItem(upgradeSlot) != null) {
@@ -113,6 +117,8 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
                 } else {
                     event.getInventory().getItem(upgradeSlot).setAmount(amount);
                 }
+
+                ((Player) event.getWhoClicked()).updateInventory();
             }
 
             return;
@@ -198,50 +204,73 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
             ItemStack finalAddition = addition;
             ItemStack finalBase = base;
 
-            Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
-            while (recipeIterator.hasNext()) {
-                inv.setItem(outputSlot, new ItemStack(Material.AIR));
-                Recipe recipe = recipeIterator.next();
+            // Very very very ugly solution, but I guess, it works!
+            boolean successful = checkRecipe(inv, finalBase, finalAddition, finalTemplate);
+            if (!successful) {
+                successful = checkRecipe(inv, finalBase, finalTemplate, finalAddition);
+            }
+            if (!successful) {
+                successful = checkRecipe(inv, finalTemplate, finalBase, finalAddition);
+            }
+            if (!successful) {
+                successful = checkRecipe(inv, finalTemplate, finalAddition, finalBase);
+            }
+            if (!successful) {
+                successful = checkRecipe(inv, finalAddition, finalBase, finalTemplate);
+            }
+            if (!successful) {
+                checkRecipe(inv, finalAddition, finalTemplate, finalBase);
+            }
 
-                if (recipe instanceof SmithingTrimRecipe trimRecipe) {
-                    boolean test1 = trimRecipe.getTemplate().test(finalTemplate);
-                    boolean test2 = trimRecipe.getBase().test(finalBase);
-                    boolean test3 = trimRecipe.getAddition().test(finalAddition);
+        }, 0L);
+    }
 
-                    if (test1 && test2 && test3) {
-                        ItemStack clone = finalBase.clone();
-                        ItemMeta meta = clone.getItemMeta();
-                        if (meta instanceof ArmorMeta armorMeta) {
-                            ArmorTrim trim = armorTrim(finalAddition, finalTemplate);
+    private boolean checkRecipe(Inventory inventory, ItemStack finalTemplate, ItemStack finalBase, ItemStack finalAddition) {
+        Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
+        while (recipeIterator.hasNext()) {
+            inventory.setItem(outputSlot, new ItemStack(Material.AIR));
+            Recipe recipe = recipeIterator.next();
 
-                            armorMeta.setTrim(trim);
-                            clone.setItemMeta(armorMeta);
-                        }
+            if (recipe instanceof SmithingTrimRecipe trimRecipe) {
+                boolean test1 = trimRecipe.getTemplate().test(finalTemplate);
+                boolean test2 = trimRecipe.getBase().test(finalBase);
+                boolean test3 = trimRecipe.getAddition().test(finalAddition);
 
-                        inv.setItem(outputSlot, clone);
-                        break;
-                    } else {
-                        inv.setItem(outputSlot, new ItemStack(Material.AIR));
+                if (test1 && test2 && test3) {
+                    ItemStack clone = finalBase.clone();
+                    ItemMeta meta = clone.getItemMeta();
+                    if (meta instanceof ArmorMeta armorMeta) {
+                        ArmorTrim trim = armorTrim(finalAddition, finalTemplate);
+
+                        armorMeta.setTrim(trim);
+                        clone.setItemMeta(armorMeta);
                     }
-                }
 
-                if (recipe instanceof SmithingTransformRecipe transformRecipe) {
-                    boolean test1 = transformRecipe.getTemplate().getItemStack().getType() == finalTemplate.getType();
-                    boolean test2 = transformRecipe.getBase().getItemStack().getType() == finalBase.getType();
-                    ItemMeta baseItemMeta = finalBase.getItemMeta();
-                    boolean test3 = transformRecipe.getAddition().getItemStack().getType() == finalAddition.getType();
-
-                    if (test1 && test2 && test3) {
-                        ItemStack item = transformRecipe.getResult();
-                        item.setItemMeta(baseItemMeta);
-                        inv.setItem(outputSlot, item);
-                        break;
-                    } else {
-                        inv.setItem(outputSlot, new ItemStack(Material.AIR));
-                    }
+                    inventory.setItem(outputSlot, clone);
+                    return true;
+                } else {
+                    inventory.setItem(outputSlot, new ItemStack(Material.AIR));
                 }
             }
-        }, 0L);
+
+            if (recipe instanceof SmithingTransformRecipe transformRecipe) {
+                boolean test1 = transformRecipe.getTemplate().test(finalTemplate);
+                boolean test2 = transformRecipe.getBase().test(finalBase);
+                ItemMeta baseItemMeta = finalBase.getItemMeta();
+                boolean test3 = transformRecipe.getAddition().test(finalAddition);
+
+                if (test1 && test2 && test3) {
+                    ItemStack item = transformRecipe.getResult();
+                    item.setItemMeta(baseItemMeta);
+                    inventory.setItem(outputSlot, item);
+                    return true;
+                } else {
+                    inventory.setItem(outputSlot, new ItemStack(Material.AIR));
+                }
+            }
+        }
+
+        return false;
     }
 
     @Nullable
