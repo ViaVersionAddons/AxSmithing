@@ -55,6 +55,6 @@ public class InteractListener implements Listener {
         }
 
         event.getPlayer().closeInventory();
-        AxSmithingPlugin.getSmithingTableImpl().open((Player) event.getPlayer());
+        Bukkit.getScheduler().runTaskLater(AxSmithingPlugin.getInstance(), () -> AxSmithingPlugin.getSmithingTableImpl().open((Player) event.getPlayer()),1L);
     }
 }

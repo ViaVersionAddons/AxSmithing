@@ -12,6 +12,7 @@ menu:
     # If we should force our gui instead of the default one, for 1.20 players.
     # Can be useful, if you want to remove the need for netherite template usage
     force-for-1_20-clients: false
+    dont-convert-with-modeldata: false
     items:
       '1':
         slots:
@@ -30,6 +31,7 @@ menu:
     item-slot: 11
     upgrade-slot: 12
     output-slot: 14
+    dont-convert-with-modeldata: false
     items:
       '1':
         slots:

@@ -38,6 +38,7 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
     private final int itemSlot;
     private final int templateSlot;
     private final boolean needNetheriteTemplate;
+    private final boolean dontConvertWithModelData;
 
     public SmithingTable_V1_20() {
         YamlDocument config = AxSmithingPlugin.getConfiguration();
@@ -46,6 +47,7 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
         templateSlot = config.getInt("menu.1_20.template-slot");
         itemSlot = config.getInt("menu.1_20.item-slot");
         needNetheriteTemplate = config.getBoolean("menu.1_20.need-netherite-template");
+        dontConvertWithModelData = config.getBoolean("menu.1_20.dont-convert-with-modeldata");
     }
 
     @Override
@@ -258,6 +260,10 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
                 boolean test2 = transformRecipe.getBase().test(finalBase);
                 ItemMeta baseItemMeta = finalBase.getItemMeta();
                 boolean test3 = transformRecipe.getAddition().test(finalAddition);
+
+                if (dontConvertWithModelData && baseItemMeta.hasCustomModelData()) {
+                    return false;
+                }
 
                 if (test1 && test2 && test3) {
                     ItemStack item = transformRecipe.getResult();

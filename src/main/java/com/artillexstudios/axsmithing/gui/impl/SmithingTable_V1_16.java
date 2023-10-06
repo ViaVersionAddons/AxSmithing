@@ -30,12 +30,14 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
     private final int outputSlot;
     private final int upgradeSlot;
     private final int itemSlot;
+    private final boolean dontConvertWithModelData;
 
     public SmithingTable_V1_16() {
         YamlDocument config = AxSmithingPlugin.getConfiguration();
         outputSlot = config.getInt("menu.1_16.output-slot");
         upgradeSlot = config.getInt("menu.1_16.upgrade-slot");
         itemSlot = config.getInt("menu.1_16.item-slot");
+        dontConvertWithModelData = config.getBoolean("menu.1_16.dont-convert-with-modeldata");
     }
 
     @Override
@@ -183,6 +185,10 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
                 boolean test1 = smithingRecipe.getBase().test(finalBase);
                 ItemMeta baseItemMeta = finalBase.getItemMeta();
                 boolean test2 = smithingRecipe.getAddition().test(finalAddition);
+
+                if (dontConvertWithModelData && baseItemMeta.hasCustomModelData()) {
+                    return false;
+                }
 
                 if (test1 && test2) {
                     ItemStack item = smithingRecipe.getResult();
