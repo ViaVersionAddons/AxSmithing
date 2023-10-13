@@ -183,8 +183,8 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
 
             if (recipe instanceof SmithingRecipe smithingRecipe) {
                 boolean test1 = smithingRecipe.getBase().test(finalBase);
-                if (!finalBase.hasItemMeta()) return false;
                 ItemMeta baseItemMeta = finalBase.getItemMeta();
+                if (baseItemMeta == null) return false;
                 boolean test2 = smithingRecipe.getAddition().test(finalAddition);
 
                 if (dontConvertWithModelData && baseItemMeta.hasCustomModelData()) {
