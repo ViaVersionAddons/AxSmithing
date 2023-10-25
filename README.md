@@ -19,6 +19,8 @@ Commands:
 Permissions:
 axsmithing.reload
 
+To download: [Click here, and download the latest .jar!](https://github.com/ViaVersionAddons/AxSmithing/releases/tag/release)
+
 Need help? Join our Discord!
 
 ![discord](https://discordapp.com/api/guilds/1130070418150133761/widget.png?style=banner2)
