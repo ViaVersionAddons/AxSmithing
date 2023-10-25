@@ -20,4 +20,5 @@ Permissions:
 axsmithing.reload
 
 Need help? Join our Discord!
+
 ![discord](https://discordapp.com/api/guilds/1130070418150133761/widget.png?style=banner2)
