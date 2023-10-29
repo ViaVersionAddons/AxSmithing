@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.artillexstudios.axsmithing'
-version = '1.0'
+version = '1.2'
 
 repositories {
     mavenCentral()
@@ -38,6 +38,12 @@ dependencies {
 compileJava {
     dependsOn(clean)
     options.encoding = "UTF-8"
+}
+
+processResources {
+    filesMatching("plugin.yml") {
+        expand(version: version)
+    }
 }
 
 shadowJar {

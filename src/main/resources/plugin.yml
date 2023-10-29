@@ -1,6 +1,6 @@
 name: "AxSmithing"
 main: "com.artillexstudios.axsmithing.AxSmithingPlugin"
-version: "1.0"
+version: "$version"
 api-version: "1.16"
 depend:
   - ViaVersion

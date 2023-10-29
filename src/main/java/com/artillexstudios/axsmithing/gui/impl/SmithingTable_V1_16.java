@@ -116,6 +116,12 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
     public void handleDrag(InventoryDragEvent event) {
         if (!(event.getInventory().getHolder() instanceof SmithingTable_V1_16)) return;
 
+        ItemStack outputItem = event.getInventory().getItem(outputSlot);
+        if (event.getRawSlots().contains(outputSlot) && (outputItem == null || outputItem.getType().isAir()) && !event.getOldCursor().getType().isAir()) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (event.getInventory().getItem(outputSlot) != null && event.getInventory().getItem(outputSlot).getType() != Material.AIR) {
             event.getInventory().getItem(outputSlot).setAmount(0);
         }

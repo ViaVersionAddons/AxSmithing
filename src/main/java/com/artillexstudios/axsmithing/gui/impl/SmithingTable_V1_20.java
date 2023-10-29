@@ -133,17 +133,23 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
     public void handleClose(InventoryCloseEvent event) {
         if (!(event.getInventory().getHolder() instanceof SmithingTable_V1_20)) return;
 
-        if (event.getInventory().getItem(templateSlot) != null)
+        if (event.getInventory().getItem(templateSlot) != null && event.getInventory().getItem(templateSlot).getType() != Material.AIR)
             event.getPlayer().getInventory().addItem(event.getInventory().getItem(templateSlot));
-        if (event.getInventory().getItem(itemSlot) != null)
+        if (event.getInventory().getItem(itemSlot) != null && event.getInventory().getItem(itemSlot).getType() != Material.AIR)
             event.getPlayer().getInventory().addItem(event.getInventory().getItem(itemSlot));
-        if (event.getInventory().getItem(upgradeSlot) != null)
+        if (event.getInventory().getItem(upgradeSlot) != null && event.getInventory().getItem(upgradeSlot).getType() != Material.AIR)
             event.getPlayer().getInventory().addItem(event.getInventory().getItem(upgradeSlot));
     }
 
     @Override
     public void handleDrag(InventoryDragEvent event) {
         if (!(event.getInventory().getHolder() instanceof SmithingTable_V1_20)) return;
+
+        ItemStack outputItem = event.getInventory().getItem(outputSlot);
+        if (event.getRawSlots().contains(outputSlot) && (outputItem == null || outputItem.getType().isAir()) && !event.getOldCursor().getType().isAir()) {
+            event.setCancelled(true);
+            return;
+        }
 
         if (event.getInventory().getItem(outputSlot) != null) {
             event.getInventory().getItem(outputSlot).setAmount(0);
