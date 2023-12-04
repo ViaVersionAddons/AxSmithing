@@ -1,9 +1,10 @@
 package com.artillexstudios.axsmithing.listener;
 
+import com.artillexstudios.axapi.scheduler.Scheduler;
+import com.artillexstudios.axapi.utils.Version;
 import com.artillexstudios.axsmithing.AxSmithingPlugin;
 import com.viaversion.viaversion.api.Via;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -24,11 +25,11 @@ public class InteractListener implements Listener {
         if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
 
         if (AxSmithingPlugin.is1_20()) {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= ProtocolVersion.v1_20.getVersion() && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
+            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= Version.v1_20_1.protocolId && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
                 return;
             }
         } else {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) != ProtocolVersion.v1_20.getVersion()) {
+            if (Via.getAPI().getPlayerVersion(event.getPlayer()) != Version.v1_20_1.protocolId && Via.getAPI().getPlayerVersion(event.getPlayer()) != Version.v1_20_2.protocolId) {
                 return;
             }
         }
@@ -45,16 +46,18 @@ public class InteractListener implements Listener {
         if (event.getInventory().getType() != InventoryType.SMITHING) return;
 
         if (AxSmithingPlugin.is1_20()) {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= ProtocolVersion.v1_20.getVersion() && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
+            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= Version.v1_20_1.protocolId && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
                 return;
             }
         } else {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) != ProtocolVersion.v1_20.getVersion()) {
+            if (Via.getAPI().getPlayerVersion(event.getPlayer()) != Version.v1_20_1.protocolId && Via.getAPI().getPlayerVersion(event.getPlayer()) != Version.v1_20_2.protocolId) {
                 return;
             }
         }
 
         event.getPlayer().closeInventory();
-        Bukkit.getScheduler().runTaskLater(AxSmithingPlugin.getInstance(), () -> AxSmithingPlugin.getSmithingTableImpl().open((Player) event.getPlayer()),1L);
+        Scheduler.get().runLater(t -> {
+            AxSmithingPlugin.getSmithingTableImpl().open((Player) event.getPlayer());
+        }, 1);
     }
 }

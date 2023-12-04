@@ -1,11 +1,12 @@
 package com.artillexstudios.axsmithing.gui.impl;
 
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.YamlDocument;
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section;
+import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axsmithing.AxSmithingPlugin;
 import com.artillexstudios.axsmithing.gui.SmithingTable;
 import com.artillexstudios.axsmithing.utils.ItemBuilder;
 import com.artillexstudios.axsmithing.utils.StringUtils;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -159,7 +160,7 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
     }
 
     private void updateGui(Inventory inv) {
-        Bukkit.getScheduler().runTaskLater(AxSmithingPlugin.getInstance(), t -> {
+        Scheduler.get().runLater(t -> {
             ItemStack base = inv.getItem(itemSlot);
             ItemStack addition = inv.getItem(upgradeSlot);
             if (addition == null || addition.getType().isAir()) {
@@ -178,7 +179,7 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
             if (!successful) {
                 checkRecipe(inv, finalAddition, finalBase);
             }
-        }, 0L);
+        }, 1L);
     }
 
     private boolean checkRecipe(Inventory inventory, ItemStack finalBase, ItemStack finalAddition) {

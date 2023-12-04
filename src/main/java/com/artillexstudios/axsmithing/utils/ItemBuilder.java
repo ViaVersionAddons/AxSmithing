@@ -1,6 +1,6 @@
 package com.artillexstudios.axsmithing.utils;
 
-import dev.dejvokep.boostedyaml.block.implementation.Section;
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;

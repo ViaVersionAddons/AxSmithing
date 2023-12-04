@@ -1,11 +1,12 @@
 package com.artillexstudios.axsmithing.gui.impl;
 
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.YamlDocument;
+import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.block.implementation.Section;
+import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axsmithing.AxSmithingPlugin;
 import com.artillexstudios.axsmithing.gui.SmithingTable;
 import com.artillexstudios.axsmithing.utils.ItemBuilder;
 import com.artillexstudios.axsmithing.utils.StringUtils;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,6 +17,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.SmithingRecipe;
 import org.bukkit.inventory.SmithingTransformRecipe;
 import org.bukkit.inventory.SmithingTrimRecipe;
 import org.bukkit.inventory.meta.ArmorMeta;
@@ -26,11 +29,13 @@ import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
     private final int outputSlot;
@@ -39,6 +44,10 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
     private final int templateSlot;
     private final boolean needNetheriteTemplate;
     private final boolean dontConvertWithModelData;
+    private final Field templateField;
+    private final Field baseField;
+    private final Field additionField;
+    private final Field resultField;
 
     public SmithingTable_V1_20() {
         YamlDocument config = AxSmithingPlugin.getConfiguration();
@@ -48,6 +57,33 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
         itemSlot = config.getInt("menu.1_20.item-slot");
         needNetheriteTemplate = config.getBoolean("menu.1_20.need-netherite-template");
         dontConvertWithModelData = config.getBoolean("menu.1_20.dont-convert-with-modeldata");
+        try {
+            templateField = SmithingTransformRecipe.class.getDeclaredField("template");
+            templateField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            baseField = SmithingRecipe.class.getDeclaredField("base");
+            baseField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            additionField = SmithingRecipe.class.getDeclaredField("addition");
+            additionField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            resultField = SmithingRecipe.class.getDeclaredField("result");
+            resultField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -188,7 +224,7 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
     }
 
     private void updateGui(Inventory inv) {
-        Bukkit.getScheduler().runTaskLater(AxSmithingPlugin.getInstance(), t -> {
+        Scheduler.get().runLater(t -> {
             ItemStack template = inv.getItem(templateSlot);
             ItemStack base = inv.getItem(itemSlot);
             ItemStack addition = inv.getItem(upgradeSlot);
@@ -230,7 +266,7 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
                 checkRecipe(inv, finalAddition, finalTemplate, finalBase);
             }
 
-        }, 0L);
+        }, 1L);
     }
 
     private boolean checkRecipe(Inventory inventory, ItemStack finalTemplate, ItemStack finalBase, ItemStack finalAddition) {
@@ -262,18 +298,28 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
             }
 
             if (recipe instanceof SmithingTransformRecipe transformRecipe) {
-                boolean test1 = transformRecipe.getTemplate().test(finalTemplate);
-                boolean test2 = transformRecipe.getBase().test(finalBase);
+                RecipeChoice template = getTemplate(transformRecipe);
+                RecipeChoice base = getBase(transformRecipe);
+                RecipeChoice addition = getAddition(transformRecipe);
+                if (template == null || base == null || addition == null) {
+                    return false;
+                }
+
+                boolean test1 = template.test(finalTemplate);
+                boolean test2 = base.test(finalBase);
                 ItemMeta baseItemMeta = finalBase.getItemMeta();
                 if (baseItemMeta == null) return false;
-                boolean test3 = transformRecipe.getAddition().test(finalAddition);
+                boolean test3 = addition.test(finalAddition);
 
                 if (dontConvertWithModelData && baseItemMeta.hasCustomModelData()) {
                     return false;
                 }
 
                 if (test1 && test2 && test3) {
-                    ItemStack item = transformRecipe.getResult();
+                    ItemStack item = getResult(transformRecipe);
+                    if (item == null) {
+                        return false;
+                    }
                     item.setItemMeta(baseItemMeta);
                     inventory.setItem(outputSlot, item);
                     return true;
@@ -284,6 +330,62 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
         }
 
         return false;
+    }
+
+    public RecipeChoice getTemplate(SmithingTransformRecipe recipe) {
+        RecipeChoice recipeChoice;
+        try {
+            recipeChoice = (RecipeChoice) templateField.get(recipe);
+            if (recipeChoice == null) {
+                return null;
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return recipeChoice.clone();
+    }
+
+    public RecipeChoice getBase(SmithingTransformRecipe recipe) {
+        RecipeChoice recipeChoice;
+        try {
+            recipeChoice = (RecipeChoice) baseField.get(recipe);
+            if (recipeChoice == null) {
+                return null;
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return recipeChoice.clone();
+    }
+
+    public RecipeChoice getAddition(SmithingTransformRecipe recipe) {
+        RecipeChoice recipeChoice;
+        try {
+            recipeChoice = (RecipeChoice) additionField.get(recipe);
+            if (recipeChoice == null) {
+                return null;
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return recipeChoice.clone();
+    }
+
+    public ItemStack getResult(SmithingTransformRecipe recipe) {
+        ItemStack result;
+        try {
+            result = (ItemStack) resultField.get(recipe);
+            if (result == null) {
+                return null;
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result.clone();
     }
 
     @Nullable

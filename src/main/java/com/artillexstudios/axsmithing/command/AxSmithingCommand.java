@@ -16,7 +16,7 @@ public class AxSmithingCommand implements CommandExecutor {
             return true;
         }
 
-        String took = AxSmithingPlugin.getInstance().reload();
+        String took = String.valueOf(AxSmithingPlugin.getInstance().reloadWithTime());
         sender.sendMessage(StringUtils.format(AxSmithingPlugin.getConfiguration().getString("messages.prefix") + AxSmithingPlugin.getConfiguration().getString("messages.reload").replace("%time%", took)));
         return true;
     }

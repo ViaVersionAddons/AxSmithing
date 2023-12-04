@@ -2,6 +2,7 @@ name: "AxSmithing"
 main: "com.artillexstudios.axsmithing.AxSmithingPlugin"
 version: "$version"
 api-version: "1.16"
+folia-supported: true
 depend:
   - ViaVersion
 
