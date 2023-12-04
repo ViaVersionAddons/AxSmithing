@@ -19,7 +19,7 @@ Commands:
 Permissions:
 axsmithing.reload
 
-To download: [Click here, and download the latest .jar!](https://github.com/ViaVersionAddons/AxSmithing/releases/tag/release)
+To download: [Click here, and download the latest .jar!](https://github.com/ViaVersionAddons/AxSmithing/releases/)
 
 Need help? Join our Discord!
 
