@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
     private final int outputSlot;

@@ -17,10 +17,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.SmithingRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +34,9 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
     private final int upgradeSlot;
     private final int itemSlot;
     private final boolean dontConvertWithModelData;
+    private final Field baseField;
+    private final Field additionField;
+    private final Field resultField;
 
     public SmithingTable_V1_16() {
         YamlDocument config = AxSmithingPlugin.getConfiguration();
@@ -39,6 +44,27 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
         upgradeSlot = config.getInt("menu.1_16.upgrade-slot");
         itemSlot = config.getInt("menu.1_16.item-slot");
         dontConvertWithModelData = config.getBoolean("menu.1_16.dont-convert-with-modeldata");
+
+        try {
+            baseField = SmithingRecipe.class.getDeclaredField("base");
+            baseField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            additionField = SmithingRecipe.class.getDeclaredField("addition");
+            additionField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            resultField = SmithingRecipe.class.getDeclaredField("result");
+            resultField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -189,17 +215,27 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
             Recipe recipe = recipeIterator.next();
 
             if (recipe instanceof SmithingRecipe smithingRecipe) {
-                boolean test1 = smithingRecipe.getBase().test(finalBase);
+                RecipeChoice base = getBase(smithingRecipe);
+                RecipeChoice addition = getAddition(smithingRecipe);
+                if (base == null || addition == null) {
+                    return false;
+                }
+
+                boolean test1 = base.test(finalBase);
                 ItemMeta baseItemMeta = finalBase.getItemMeta();
                 if (baseItemMeta == null) return false;
-                boolean test2 = smithingRecipe.getAddition().test(finalAddition);
+                boolean test2 = addition.test(finalAddition);
 
                 if (dontConvertWithModelData && baseItemMeta.hasCustomModelData()) {
                     return false;
                 }
 
                 if (test1 && test2) {
-                    ItemStack item = smithingRecipe.getResult();
+                    ItemStack item = getResult(smithingRecipe);
+                    if (item == null) {
+                        return false;
+                    }
+
                     item.setItemMeta(baseItemMeta);
                     inventory.setItem(outputSlot, item);
                     return true;
@@ -210,5 +246,47 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
         }
 
         return false;
+    }
+
+    public RecipeChoice getBase(SmithingRecipe recipe) {
+        RecipeChoice recipeChoice;
+        try {
+            recipeChoice = (RecipeChoice) baseField.get(recipe);
+            if (recipeChoice == null) {
+                return null;
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return recipeChoice.clone();
+    }
+
+    public RecipeChoice getAddition(SmithingRecipe recipe) {
+        RecipeChoice recipeChoice;
+        try {
+            recipeChoice = (RecipeChoice) additionField.get(recipe);
+            if (recipeChoice == null) {
+                return null;
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return recipeChoice.clone();
+    }
+
+    public ItemStack getResult(SmithingRecipe recipe) {
+        ItemStack result;
+        try {
+            result = (ItemStack) resultField.get(recipe);
+            if (result == null) {
+                return null;
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result.clone();
     }
 }
