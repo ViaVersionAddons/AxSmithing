@@ -90,7 +90,9 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
         if (!(event.getInventory().getHolder() instanceof SmithingTable_V1_16)) return;
 
         if ((event.getSlot() == upgradeSlot || event.getSlot() == itemSlot) && event.getInventory().getItem(outputSlot) != null) {
-            event.getInventory().setItem(outputSlot, null);
+            if (checkRecipes(event.getInventory(), event.getInventory().getItem(itemSlot), event.getInventory().getItem(upgradeSlot))) {
+                event.getInventory().setItem(outputSlot, null);
+            }
         }
 
         if (event.getClickedInventory() == event.getView().getTopInventory()) {
@@ -200,15 +202,24 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
             ItemStack finalAddition = addition;
             ItemStack finalBase = base;
 
-            boolean successful = checkRecipe(inv, finalBase, finalAddition);
-
-            if (!successful) {
-                checkRecipe(inv, finalAddition, finalBase);
-            }
+            checkRecipes(inv, finalBase, finalAddition);
         }, 1L);
     }
 
+    private boolean checkRecipes(Inventory inv, ItemStack finalBase, ItemStack finalAddition) {
+        boolean successful = checkRecipe(inv, finalBase, finalAddition);
+
+        if (!successful) {
+            checkRecipe(inv, finalAddition, finalBase);
+        }
+
+        return successful;
+    }
+
     private boolean checkRecipe(Inventory inventory, ItemStack finalBase, ItemStack finalAddition) {
+        if (inventory.getItem(outputSlot) != null && !inventory.getItem(outputSlot).getType().isAir()) {
+            return false;
+        }
         Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
         while (recipeIterator.hasNext()) {
             inventory.setItem(outputSlot, new ItemStack(Material.AIR));

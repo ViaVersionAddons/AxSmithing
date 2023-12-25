@@ -109,6 +109,9 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
 
         if ((event.getSlot() == upgradeSlot || event.getSlot() == itemSlot || event.getSlot() == templateSlot) && event.getInventory().getItem(outputSlot) != null) {
             event.getInventory().setItem(outputSlot, null);
+            if (checkRecipes(event.getInventory(), event.getInventory().getItem(templateSlot), event.getInventory().getItem(itemSlot), event.getInventory().getItem(upgradeSlot))) {
+                event.getInventory().setItem(outputSlot, null);
+            }
         }
 
         if (event.getClickedInventory() == event.getView().getTopInventory()) {
@@ -248,30 +251,37 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
             ItemStack finalBase = base;
 
             // Very very very ugly solution, but I guess, it works!
-            boolean successful = checkRecipe(inv, finalBase, finalAddition, finalTemplate);
-            if (!successful) {
-                successful = checkRecipe(inv, finalBase, finalTemplate, finalAddition);
-            }
-            if (!successful) {
-                successful = checkRecipe(inv, finalTemplate, finalBase, finalAddition);
-            }
-            if (!successful) {
-                successful = checkRecipe(inv, finalTemplate, finalAddition, finalBase);
-            }
-            if (!successful) {
-                successful = checkRecipe(inv, finalAddition, finalBase, finalTemplate);
-            }
-            if (!successful) {
-                checkRecipe(inv, finalAddition, finalTemplate, finalBase);
-            }
-
+            checkRecipes(inv, finalTemplate, finalBase, finalAddition);
         }, 1L);
     }
 
+    private boolean checkRecipes(Inventory inv, ItemStack finalTemplate, ItemStack finalBase, ItemStack finalAddition) {
+        boolean successful = checkRecipe(inv, finalBase, finalAddition, finalTemplate);
+        if (!successful) {
+            successful = checkRecipe(inv, finalBase, finalTemplate, finalAddition);
+        }
+        if (!successful) {
+            successful = checkRecipe(inv, finalTemplate, finalBase, finalAddition);
+        }
+        if (!successful) {
+            successful = checkRecipe(inv, finalTemplate, finalAddition, finalBase);
+        }
+        if (!successful) {
+            successful = checkRecipe(inv, finalAddition, finalBase, finalTemplate);
+        }
+        if (!successful) {
+            checkRecipe(inv, finalAddition, finalTemplate, finalBase);
+        }
+
+        return successful;
+    }
+
     private boolean checkRecipe(Inventory inventory, ItemStack finalTemplate, ItemStack finalBase, ItemStack finalAddition) {
+        if (inventory.getItem(outputSlot) != null && !inventory.getItem(outputSlot).getType().isAir()) {
+            return false;
+        }
         Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
         while (recipeIterator.hasNext()) {
-            inventory.setItem(outputSlot, new ItemStack(Material.AIR));
             Recipe recipe = recipeIterator.next();
 
             if (recipe instanceof SmithingTrimRecipe trimRecipe) {
