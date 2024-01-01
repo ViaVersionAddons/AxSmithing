@@ -108,7 +108,6 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
         if (!(event.getInventory().getHolder() instanceof SmithingTable_V1_20)) return;
 
         if ((event.getSlot() == upgradeSlot || event.getSlot() == itemSlot || event.getSlot() == templateSlot) && event.getInventory().getItem(outputSlot) != null) {
-            event.getInventory().setItem(outputSlot, null);
             if (checkRecipes(event.getInventory(), event.getInventory().getItem(templateSlot), event.getInventory().getItem(itemSlot), event.getInventory().getItem(upgradeSlot))) {
                 event.getInventory().setItem(outputSlot, null);
             }
@@ -277,14 +276,12 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
     }
 
     private boolean checkRecipe(Inventory inventory, ItemStack finalTemplate, ItemStack finalBase, ItemStack finalAddition) {
-        if (inventory.getItem(outputSlot) != null && !inventory.getItem(outputSlot).getType().isAir()) {
-            return false;
-        }
         Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
         while (recipeIterator.hasNext()) {
             Recipe recipe = recipeIterator.next();
 
             if (recipe instanceof SmithingTrimRecipe trimRecipe) {
+                if (finalBase == null || finalAddition == null || finalTemplate == null) return false;
                 boolean test1 = trimRecipe.getTemplate().test(finalTemplate);
                 boolean test2 = trimRecipe.getBase().test(finalBase);
                 boolean test3 = trimRecipe.getAddition().test(finalAddition);
@@ -297,6 +294,11 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
 
                         armorMeta.setTrim(trim);
                         clone.setItemMeta(armorMeta);
+                    }
+
+                    ItemStack it;
+                    if ((it = inventory.getItem(outputSlot)) != null && it.getType() == clone.getType()) {
+                        return false;
                     }
 
                     inventory.setItem(outputSlot, clone);
@@ -329,6 +331,12 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
                     if (item == null) {
                         return false;
                     }
+
+                    ItemStack it;
+                    if ((it = inventory.getItem(outputSlot)) != null && it.getType() == item.getType()) {
+                        return false;
+                    }
+
                     item.setItemMeta(baseItemMeta);
                     inventory.setItem(outputSlot, item);
                     return true;

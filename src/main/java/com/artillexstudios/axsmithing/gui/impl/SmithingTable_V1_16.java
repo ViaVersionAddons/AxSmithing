@@ -10,6 +10,7 @@ import com.artillexstudios.axsmithing.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -217,9 +218,6 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
     }
 
     private boolean checkRecipe(Inventory inventory, ItemStack finalBase, ItemStack finalAddition) {
-        if (inventory.getItem(outputSlot) != null && !inventory.getItem(outputSlot).getType().isAir()) {
-            return false;
-        }
         Iterator<Recipe> recipeIterator = Bukkit.getServer().recipeIterator();
         while (recipeIterator.hasNext()) {
             inventory.setItem(outputSlot, new ItemStack(Material.AIR));
@@ -244,6 +242,12 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
                 if (test1 && test2) {
                     ItemStack item = getResult(smithingRecipe);
                     if (item == null) {
+                        return false;
+                    }
+
+
+                    ItemStack it;
+                    if ((it = inventory.getItem(outputSlot)) != null && it.getType() == item.getType()) {
                         return false;
                     }
 

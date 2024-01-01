@@ -43,9 +43,11 @@ menu:
           - 14
         material: air
 
+listen-to-interact-event: true
+
 messages:
   prefix: "&#AA3428&lAxSmithing &7» "
   no-permission: "&cYou do not have permission to do this!"
   reload: "&aPlugin reloaded in %time%ms!"
 
-config-version: 1
+config-version: 2
