@@ -269,7 +269,7 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
             successful = checkRecipe(inv, finalAddition, finalBase, finalTemplate);
         }
         if (!successful) {
-            checkRecipe(inv, finalAddition, finalTemplate, finalBase);
+            successful = checkRecipe(inv, finalAddition, finalTemplate, finalBase);
         }
 
         return successful;

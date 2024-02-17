@@ -211,7 +211,7 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
         boolean successful = checkRecipe(inv, finalBase, finalAddition);
 
         if (!successful) {
-            checkRecipe(inv, finalAddition, finalBase);
+            successful = checkRecipe(inv, finalAddition, finalBase);
         }
 
         return successful;
