@@ -233,11 +233,11 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
                 addition = new ItemStack(Material.AIR);
             }
 
-            if (base == null || addition.getType().isAir()) {
+            if (base == null || base.getType().isAir()) {
                 base = new ItemStack(Material.AIR);
             }
 
-            if (template == null || addition.getType().isAir()) {
+            if (template == null || template.getType().isAir()) {
                 if (!needNetheriteTemplate) {
                     template = new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE);
                 } else {

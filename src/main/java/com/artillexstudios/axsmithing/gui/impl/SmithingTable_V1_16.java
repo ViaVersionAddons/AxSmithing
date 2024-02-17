@@ -196,7 +196,7 @@ public class SmithingTable_V1_16 implements SmithingTable, InventoryHolder {
                 addition = new ItemStack(Material.AIR);
             }
 
-            if (base == null || addition.getType().isAir()) {
+            if (base == null || base.getType().isAir()) {
                 base = new ItemStack(Material.AIR);
             }
 
