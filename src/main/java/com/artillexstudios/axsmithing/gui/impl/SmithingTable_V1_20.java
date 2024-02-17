@@ -238,10 +238,16 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
             }
 
             if (template == null || template.getType().isAir()) {
-                if (!needNetheriteTemplate) {
+                template = new ItemStack(Material.AIR);
+            }
+
+            if (!needNetheriteTemplate && !hasTemplate(addition, base, template)) {
+                if (template.getType().isAir()) {
                     template = new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE);
-                } else {
-                    template = new ItemStack(Material.AIR);
+                } else if (base.getType().isAir()) {
+                    base = new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE);
+                } else if (addition.getType().isAir()) {
+                    addition = new ItemStack(Material.NETHERITE_UPGRADE_SMITHING_TEMPLATE);;
                 }
             }
 
@@ -273,6 +279,30 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
         }
 
         return successful;
+    }
+
+    private boolean hasTemplate(ItemStack item1, ItemStack item2, ItemStack item3) {
+        if (isTemplate(item1)) {
+            return true;
+        } else if (isTemplate(item2)) {
+            return true;
+        } else {
+            return isTemplate(item3);
+        }
+    }
+
+    private boolean isTemplate(ItemStack item) {
+        return switch (item.getType()) {
+            case COAST_ARMOR_TRIM_SMITHING_TEMPLATE, SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                 DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, EYE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                 SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE, HOST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                 RAISER_ARMOR_TRIM_SMITHING_TEMPLATE, SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                 RIB_ARMOR_TRIM_SMITHING_TEMPLATE, SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                 SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, TIDE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                 VEX_ARMOR_TRIM_SMITHING_TEMPLATE, WARD_ARMOR_TRIM_SMITHING_TEMPLATE,
+                 WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE -> true;
+            default -> false;
+        };
     }
 
     private boolean checkRecipe(Inventory inventory, ItemStack finalTemplate, ItemStack finalBase, ItemStack finalAddition) {
