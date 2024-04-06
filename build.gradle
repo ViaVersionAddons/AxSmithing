@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.artillexstudios.axsmithing'
-version = '1.6'
+version = '1.7'
 
 repositories {
     mavenCentral()
@@ -50,7 +50,6 @@ shadowJar {
     relocate("net.byteflux.libby", "com.artillexstudios.axsmithing.libs.libby")
     relocate("org.bstats", "com.artillexstudios.axsmithing.libs.bstats")
     relocate("com.artillexstudios.axapi", "com.artillexstudios.axsmithing.libs.axapi")
-    minimize()
 }
 
 build {
