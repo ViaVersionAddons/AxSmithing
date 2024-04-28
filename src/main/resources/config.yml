@@ -32,6 +32,7 @@ menu:
     upgrade-slot: 12
     output-slot: 14
     dont-convert-with-modeldata: false
+    force: false
     items:
       '1':
         slots:

@@ -25,11 +25,11 @@ public class InteractListener implements Listener {
         if (!AxSmithingPlugin.getConfiguration().getBoolean("listen-to-interact-event")) return;
 
         if (AxSmithingPlugin.is1_20()) {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= Version.v1_20_1.protocolId && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
+            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= 762 && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
                 return;
             }
         } else {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) != Version.v1_20_1.protocolId && Via.getAPI().getPlayerVersion(event.getPlayer()) != Version.v1_20_2.protocolId) {
+            if (!AxSmithingPlugin.getConfiguration().getBoolean("menu.1_16.force")) {
                 return;
             }
         }
@@ -46,11 +46,11 @@ public class InteractListener implements Listener {
         if (event.getInventory().getType() != InventoryType.SMITHING) return;
 
         if (AxSmithingPlugin.is1_20()) {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= Version.v1_20_1.protocolId && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
+            if (Via.getAPI().getPlayerVersion(event.getPlayer()) >= 762 && !AxSmithingPlugin.getConfiguration().getBoolean("menu.1_20.force-for-1_20-clients")) {
                 return;
             }
         } else {
-            if (Via.getAPI().getPlayerVersion(event.getPlayer()) != Version.v1_20_1.protocolId && Via.getAPI().getPlayerVersion(event.getPlayer()) != Version.v1_20_2.protocolId) {
+            if (!AxSmithingPlugin.getConfiguration().getBoolean("menu.1_16.force")) {
                 return;
             }
         }
