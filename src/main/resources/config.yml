@@ -51,4 +51,4 @@ messages:
   no-permission: "&cYou do not have permission to do this!"
   reload: "&aPlugin reloaded in %time%ms!"
 
-config-version: 2
+config-version: 3
