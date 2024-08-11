@@ -9,6 +9,8 @@ import com.artillexstudios.axsmithing.utils.ItemBuilder;
 import com.artillexstudios.axsmithing.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -33,6 +35,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -292,17 +295,7 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
     }
 
     private boolean isTemplate(ItemStack item) {
-        return switch (item.getType()) {
-            case COAST_ARMOR_TRIM_SMITHING_TEMPLATE, SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE,
-                 DUNE_ARMOR_TRIM_SMITHING_TEMPLATE, EYE_ARMOR_TRIM_SMITHING_TEMPLATE,
-                 SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE, HOST_ARMOR_TRIM_SMITHING_TEMPLATE,
-                 RAISER_ARMOR_TRIM_SMITHING_TEMPLATE, SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE,
-                 RIB_ARMOR_TRIM_SMITHING_TEMPLATE, SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE,
-                 SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE, TIDE_ARMOR_TRIM_SMITHING_TEMPLATE,
-                 VEX_ARMOR_TRIM_SMITHING_TEMPLATE, WARD_ARMOR_TRIM_SMITHING_TEMPLATE,
-                 WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE, NETHERITE_UPGRADE_SMITHING_TEMPLATE -> true;
-            default -> false;
-        };
+        return item.getType().name().contains("SMITHING_TEMPLATE");
     }
 
     private boolean checkRecipe(Inventory inventory, ItemStack finalTemplate, ItemStack finalBase, ItemStack finalAddition) {
@@ -454,24 +447,7 @@ public class SmithingTable_V1_20 implements SmithingTable, InventoryHolder {
             default -> material = null;
         }
 
-        switch (finalTemplate.getType()) {
-            case COAST_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.COAST;
-            case DUNE_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.DUNE;
-            case EYE_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.EYE;
-            case SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.SENTRY;
-            case HOST_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.HOST;
-            case SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.SHAPER;
-            case SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.SILENCE;
-            case RAISER_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.RAISER;
-            case RIB_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.RIB;
-            case SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.SNOUT;
-            case SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.SPIRE;
-            case TIDE_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.TIDE;
-            case VEX_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.VEX;
-            case WARD_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.WARD;
-            case WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE -> pattern = TrimPattern.WAYFINDER;
-            default -> pattern = null;
-        }
+        pattern = Registry.TRIM_PATTERN.get(NamespacedKey.minecraft(finalTemplate.getType().name().replace("_ARMOR_TRIM_SMITHING_TEMPLATE", "").toLowerCase(Locale.ENGLISH)));
 
         if (pattern == null || material == null) {
             return null;
