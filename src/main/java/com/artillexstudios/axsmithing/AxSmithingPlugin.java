@@ -80,7 +80,7 @@ public class AxSmithingPlugin extends AxPlugin {
     }
 
     private void initializeSmithingTableImpl() {
-        if (Version.getServerVersion().isNewerThanOrEqualTo(Version.v1_20_1)) {
+        if (Bukkit.getBukkitVersion().startsWith("1.2")) {
             v1_20 = true;
             smithingTableImpl = new SmithingTable_V1_20();
         } else {
