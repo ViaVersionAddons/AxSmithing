@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StringUtils {
     private static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.builder().character('\u00a7').useUnusualXRepeatedCharacterHexFormat().hexColors().build();
-    private static final LegacyComponentSerializer LEGACY_FORMATTER = LegacyComponentSerializer.legacyAmpersand().toBuilder().useUnusualXRepeatedCharacterHexFormat().hexColors().build();
+    private static final LegacyComponentSerializer LEGACY_FORMATTER = LegacyComponentSerializer.builder().character('&').useUnusualXRepeatedCharacterHexFormat().hexColors().build();
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     @NotNull

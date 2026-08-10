@@ -7,7 +7,7 @@ import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.dumper.Du
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.general.GeneralSettings;
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.loader.LoaderSettings;
 import com.artillexstudios.axapi.libs.boostedyaml.boostedyaml.settings.updater.UpdaterSettings;
-import com.artillexstudios.axapi.utils.Version;
+import com.artillexstudios.axapi.scheduler.Scheduler;
 import com.artillexstudios.axsmithing.command.AxSmithingCommand;
 import com.artillexstudios.axsmithing.command.AxSmithingTabComplete;
 import com.artillexstudios.axsmithing.gui.SmithingTable;
@@ -69,6 +69,11 @@ public class AxSmithingPlugin extends AxPlugin {
         Bukkit.getPluginCommand("axsmithing").setTabCompleter(new AxSmithingTabComplete());
     }
 
+    @Override
+    public void onDisable() {
+        Scheduler.get().cancelAll();
+    }
+
     public void reload() {
         try {
             config.reload();
@@ -80,7 +85,7 @@ public class AxSmithingPlugin extends AxPlugin {
     }
 
     private void initializeSmithingTableImpl() {
-        if (Bukkit.getBukkitVersion().startsWith("1.2")) {
+        if (!Bukkit.getBukkitVersion().startsWith("1.1")) {
             v1_20 = true;
             smithingTableImpl = new SmithingTable_V1_20();
         } else {
